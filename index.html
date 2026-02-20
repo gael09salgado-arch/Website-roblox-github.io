@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Gael22_Victory Hub - Chat Visual</title>
+<style>
+body { font-family:sans-serif; background:#222; color:white; margin:0; }
+button { padding:10px 20px; margin:10px; font-size:16px; cursor:pointer; border:none; border-radius:5px; }
+button:hover { opacity:0.8; }
+
+#hub { padding:20px; text-align:center; }
+#gameArea { position:relative; width:100vw; height:80vh; background:#111; overflow:hidden; display:none; }
+
+#owner { position:absolute; width:60px; height:60px; background:blue; border-radius:50%; top:50%; left:50%; transform:translate(-50%,-50%); }
+.brainrot { position:absolute; width:50px; height:50px; background:red; border-radius:50%; }
+
+#spawnBtn { position:absolute; top:10px; left:10px; padding:10px; background:#f00; color:white; cursor:pointer; display:none; }
+
+#chatPanel {
+  position:absolute; bottom:0; right:0; width:300px; height:200px; background:rgba(0,0,0,0.7); padding:10px; overflow-y:auto; font-size:14px; display:none;
+  border-radius:10px 0 0 0;
+}
+#chatInput { width:70%; padding:5px; }
+#chatSend { width:25%; padding:5px; background:#f00; color:white; cursor:pointer; border:none; border-radius:5px; }
+</style>
+</head>
+<body>
+
+<div id="hub">
+  <h1>Gael22_Victory Hub</h1>
+  <p>Bienvenido, Gael22_victory. Tu juego está listo:</p>
+  <button onclick="startBrainrot()">Steal a Brainrot - Tu Versión</button>
+</div>
+
+<div id="gameArea">
+  <div id="owner"></div>
+  <button id="spawnBtn">Spawnear Brainrot</button>
+
+  <div id="chatPanel">
+    <div id="messages"></div>
+    <input id="chatInput" placeholder="Escribe mensaje..."/>
+    <button id="chatSend">Enviar</button>
+  </div>
+</div>
+
+<script>
+// --- Variables
+const gameArea = document.getElementById('gameArea');
+const owner = document.getElementById('owner');
+const spawnBtn = document.getElementById('spawnBtn');
+const chatPanel = document.getElementById('chatPanel');
+const messages = document.getElementById('messages');
+const chatInput = document.getElementById('chatInput');
+const chatSend = document.getElementById('chatSend');
+
+// --- Función principal
+function startBrainrot(){
+  document.getElementById('hub').style.display='none';
+  gameArea.style.display='block';
+  spawnBtn.style.display='block';
+  chatPanel.style.display='block';
+
+  // --- Mover owner con WASD
+  let x=window.innerWidth/2-30;
+  let y=window.innerHeight/2-30;
+  document.addEventListener('keydown', e=>{
+    if(e.key==='w') y-=10;
+    if(e.key==='s') y+=10;
+    if(e.key==='a') x-=10;
+    if(e.key==='d') x+=10;
+    owner.style.left=x+'px';
+    owner.style.top=y+'px';
+  });
+
+  // --- Spawnear Brainrot
+  spawnBtn.addEventListener('click', () => {
+    const b = document.createElement('div');
+    b.className='brainrot';
+    b.style.top=Math.random()*(window.innerHeight-50)+'px';
+    b.style.left=Math.random()*(window.innerWidth-50)+'px';
+    gameArea.appendChild(b);
+
+    // Movimiento simple
+    let dx=(Math.random()-0.5)*4;
+    let dy=(Math.random()-0.5)*4;
+    function move(){
+      const rect = b.getBoundingClientRect();
+      let nx = rect.left + dx;
+      let ny = rect.top + dy;
+      if(nx<0 || nx>window.innerWidth-50) dx*=-1;
+      if(ny<0 || ny>window.innerHeight-50) dy*=-1;
+      b.style.left = nx+'px';
+      b.style.top = ny+'px';
+      requestAnimationFrame(move);
+    }
+    move();
+  });
+}
+
+// --- Función Chat Visual Local
+chatSend.addEventListener('click', () => {
+  const text = chatInput.value.trim();
+  if(!text) return;
+  const msg = document.createElement('div');
+  msg.textContent = 'Gael22_victory: ' + text;
+  messages.appendChild(msg);
+  chatInput.value='';
+  messages.scrollTop = messages.scrollHeight;
+});
+</script>
+
+</body>
+</html>
